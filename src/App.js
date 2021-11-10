@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React , { useState } from 'react';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks';
+import Header from "./components/header.js";
+import PokemonsList from "./components/pokemons-list";
+import MyPokemonsList from "./components/mypokemons-list";
+import { Global, css } from "@emotion/react";
+import normalize from "normalize.css";
+import img from './img/pokemon-bg.jpg';
 
 function App() {
+  const client = new ApolloClient({
+    uri: 'https://graphql-pokeapi.graphcdn.app/'
+  });
+
+  const [ menu, setMenu ] = useState(0);
+  
+  let page;
+  if (menu === 0) 
+    {
+      page = <PokemonsList />
+    }else{
+      page = <MyPokemonsList />
+    }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <Global styles={css`
+          ${normalize}
+          body {
+            background-image: url(${img});
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size:cover;
+            font-family: Poppins;
+          }
+        `}
+      />
+      <Header setMenu={setMenu} menu={menu}/>
+      {page}
+    </ApolloProvider>
   );
 }
 
